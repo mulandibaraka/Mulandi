@@ -1,5 +1,5 @@
 // Owner number
-global.owner = '254769527061'
+global.owner = '5212464800112'
 // Owner name
 global.owner_name = 'Mohamed 🗿🚬'
 // Maximum upload file size limit (Default : 50 MB)
@@ -15,7 +15,7 @@ global.evaluate_chars = ['=>', '~>', '<', '>', '$']
 // Country code that will be automatically blocked by the system, when sending messages in private chat
 global.blocks = ['91', '92', '212']
 // Put target jid to forward friends story
-global.forwards = '254769527061@c.us'
+global.forwards = '5212464800112@c.us'
 // Get neoxr apikey by registering at https://api.neoxr.my.id
 global.Api = new (require('./neoxrApi'))(process.env.API_KEY)
 // Get bid and key configuration for autoreply chat ai feature by registering at https://brainshop.ai
@@ -24,7 +24,7 @@ global.chatai_key = 'vE3xJMwXVmWPMJcB'
 // Source version
 global.version = '2.0',
 // Bot name
-global.botname = `Spike Ai v${global.version} (🤖)`
+global.botname = `Spike Ai v${global.version} `
 // Footer text
 global.footer = 'Spike Ai'
 // Global status
