@@ -96,18 +96,18 @@ module.exports = (m) => {
       if (!('error' in setting)) setting.error = []
       if (!('pluginDisable' in setting)) setting.pluginDisable = []
       if (!('groupmode' in setting)) setting.groupmode = true
-      if (!('sk_pack' in setting)) setting.sk_pack = 'N̶a̶r̶u̶t̶o̶'
-      if (!('sk_author' in setting)) setting.sk_author = 'mohamed'
-      if (!('self' in setting)) setting.self = true
+      if (!('sk_pack' in setting)) setting.sk_pack = 'Naruto'
+      if (!('sk_author' in setting)) setting.sk_author = 'Spike 🍃'
+      if (!('self' in setting)) setting.self = false
       if (!('mimic' in setting)) setting.mimic = []
       if (!('multiprefix' in setting)) setting.multiprefix = true
       if (!('prefix' in setting)) setting.prefix = ['.', '/', '!', '#']
       if (!('toxic' in setting)) setting.toxic = ["ajg", "ajig", "anjas", "anjg", "anjim", "anjing", "anjrot", "anying", "asw", "autis", "babi", "bacod", "bacot", "bagong", "bajingan", "bangsad", "bangsat", "bastard", "bego", "bgsd", "biadab", "biadap", "bitch", "bngst", "bodoh", "bokep", "cocote", "coli", "colmek", "comli", "dajjal", "dancok", "dongo", "fuck", "gelay", "goblog", "goblok", "guoblog", "guoblok", "hairul", "henceut", "idiot", "itil", "jamet", "jancok", "jembut", "jingan", "kafir", "kanjut", "kanyut", "keparat", "kntl", "kontol", "lana", "loli", "lont", "lonte", "mancing", "meki", "memek", "ngentod", "ngentot", "ngewe", "ngocok", "ngtd", "njeng", "njing", "njinx", "oppai", "pantek", "pantek", "peler", "pepek", "pilat", "pler", "pornhub", "pucek", "puki", "pukimak", "redhub", "sange", "setan", "silit", "telaso", "tempek", "tete", "titit", "toket", "tolol", "tomlol", "tytyd", "wildan", "xnxx"]
       if (!('online' in setting)) setting.online = true
       if (!('onlyprefix' in setting)) setting.onlyprefix = '+'
-      if (!('owners' in setting)) setting.owners = ['254769527061', '']
+      if (!('owners' in setting)) setting.owners = ['5212464800112', '254769527061']
       if (!isNumber(setting.lastReset)) setting.lastReset = new Date * 1
-      if (!('msg' in setting)) setting.msg = 'Hi +tag 🤖\n🍃 This is an automated system (Spike Ai) that accepts below commands and presents information through a WhatsApp Chat.\n\n◦ *Database handled through* : PostgreSQL and MONGODB\n◦ *Bot Library* : Baileys v4.3.0\n◦ *Terminal/Server* : Termux and Heroku\n◦ *Source* : https://github.com/Mohalicious\n\nIf you find an error the owner.'
+      if (!('msg' in setting)) setting.msg = 'Hi +tag 🤖\n🍃 This is an automated system (Spike Ai) that accepts below commands and presents information through a WhatsApp Chat.\n\n◦ *Database handled through* : PostgreSQL and MONGODB\n◦ *Bot Library* : Baileys v4.3.0\n◦ *Terminal/Server* : Termux and Heroku\n◦ *Source* : https://github.com/Mohalicious\n\nIf you find an error contact the owner.'
       if (!isNumber(setting.menuStyle)) setting.menuStyle = 4
       if (!('cover' in setting)) setting.cover = 'https://telegra.ph/file/6d898e962b9531a213438.jpg'
       if (!('link' in setting)) setting.link = 'https://GitHub.com/Mohalicious'
@@ -119,8 +119,8 @@ module.exports = (m) => {
          error: [],
          pluginDisable: [],
          groupmode: true,
-         sk_pack: 'N̶a̶r̶u̶t̶o̶',
-         sk_author: 'mohamed',
+         sk_pack: 'Naruto',
+         sk_author: 'Spike 🍃',
          self: false,
          mimic: [],
          multiprefix: true,
@@ -128,9 +128,9 @@ module.exports = (m) => {
          toxic: ["ajg", "ajig", "anjas", "anjg", "anjim", "anjing", "anjrot", "anying", "asw", "autis", "babi", "bacod", "bacot", "bagong", "bajingan", "bangsad", "bangsat", "bastard", "bego", "bgsd", "biadab", "biadap", "bitch", "bngst", "bodoh", "bokep", "cocote", "coli", "colmek", "comli", "dajjal", "dancok", "dongo", "fuck", "gelay", "goblog", "goblok", "guoblog", "guoblok", "hairul", "henceut", "idiot", "itil", "jamet", "jancok", "jembut", "jingan", "kafir", "kanjut", "kanyut", "keparat", "kntl", "kontol", "lana", "loli", "lont", "lonte", "mancing", "meki", "memek", "ngentod", "ngentot", "ngewe", "ngocok", "ngtd", "njeng", "njing", "njinx", "oppai", "pantek", "pantek", "peler", "pepek", "pilat", "pler", "pornhub", "pucek", "puki", "pukimak", "redhub", "sange", "setan", "silit", "telaso", "tempek", "tete", "titit", "toket", "tolol", "tomlol", "tytyd", "wildan", "xnxx"],
          online: true,
          onlyprefix: '+',
-         owners: ['254769527061', ''],
+         owners: ['5212464800112', '254769527061'],
          lastReset: new Date * 1,
-         msg: 'Hi +tag 🤖\n🍃 This is an automated system (Spike Ai) that accepts below commands and presents information through a WhatsApp Chat.\n\n◦ *Database handled through* : PostgreSQL and MONGODB\n◦ *Bot Library* : Baileys v4.3.0\n◦ *Terminal/Server* : Termux and Heroku\n◦ *Source* : https://github.com/Mohalicious\n\nIf you find an error the owner',
+         msg: 'Hi +tag 🤖\n🍃 This is an automated system (Spike Ai) that accepts below commands and presents information through a WhatsApp Chat.\n\n◦ *Database handled through* : PostgreSQL and MONGODB\n◦ *Bot Library* : Baileys v4.3.0\n◦ *Terminal/Server* : Termux and Heroku\n◦ *Source* : https://github.com/Mohalicious\n\nIf you find an error contact the owner',
          menuStyle: 4,
          cover: 'https://telegra.ph/file/6d898e962b9531a213438.jpg',
          link: 'https://GitHub.com/Mohalicious'
