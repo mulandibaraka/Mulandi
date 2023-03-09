@@ -1,6 +1,6 @@
 const fs = require('fs')
 exports.run = {
-   usage: ['menu', 'help', 'bot', 'command'],
+   usage: ['menu', 'help'
    hidden: ['menutype'],
    async: async (m, {
       client,
@@ -17,7 +17,7 @@ exports.run = {
             if (text) {
                let cmd = Object.entries(client.plugins).filter(([_, v]) => v.run.usage && v.run.category == text.toLowerCase())
                let usage = Object.keys(Object.fromEntries(cmd))
-               if (usage.length == 0) return client.reply(m.chat, Func.texted('bold', `🚩 Category not available.`), m)
+               if (usage.length == 0) return client.reply(m.chat, Func.texted('bold', `🗿 Category not available.`), m)
                let commands = []
                cmd.map(([_, v]) => {
                   switch (v.run.usage.constructor.name) {
@@ -65,7 +65,7 @@ exports.run = {
             }
          } else if (style == 2) {
             if ((id in client.menu)) {
-               await client.sendReact(m.chat, '🍃', m.key)
+               await client.sendReact(m.chat, '🕒', m.key)
                return client.reply(m.chat, `Hi @${m.sender.split`@`[0]} ^\nTo avoid spam, menu is displayed every *3 minutes*.`, client.menu[id][0])
             }
             let filter = Object.entries(client.plugins).filter(([_, obj]) => obj.run.usage)
@@ -177,7 +177,7 @@ exports.run = {
             }
          } else if (style == 4) {
             if ((id in client.menu)) {
-               await client.sendReact(m.chat, '🍃', m.key)
+               await client.sendReact(m.chat, '🕒', m.key)
                return client.reply(m.chat, `Hi @${m.sender.split`@`[0]} ^\nTo avoid spam, menu is displayed every *3 minutes*.`, client.menu[id][0])
             }
             let filter = Object.entries(client.plugins).filter(([_, obj]) => obj.run.usage)
