@@ -15,14 +15,14 @@ global.evaluate_chars = ['=>', '~>', '<', '>', '$']
 // Country code that will be automatically blocked by the system, when sending messages in private chat
 global.blocks = ['91', '92', '212']
 // Put target jid to forward friends story
-global.forwards = '254769527062@c.us'
+global.forwards = '254769527061@c.us'
 // Get neoxr apikey by registering at https://api.neoxr.my.id
 global.Api = new (require('./neoxrApi'))(process.env.API_KEY)
 // Get bid and key configuration for autoreply chat ai feature by registering at https://brainshop.ai
 global.chatai_bid = '171035'
 global.chatai_key = 'vE3xJMwXVmWPMJcB'
 // Source version
-global.version = '2.0',
+global.version = '3.5',
 // Bot name
 global.botname = `Spike Ai v${global.version} `
 // Footer text
