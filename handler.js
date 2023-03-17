@@ -1,6 +1,5 @@
 const cron = require('node-cron')
-const fs = require('fs')
-module.exports = async (client, m, plugins) => {
+module.exports = async (client, m) => {
    try {
       require('./system/database')(m)
       const isOwner = [global.owner, ...global.db.setting.owners].map(v => v + '@s.whatsapp.net').includes(m.sender)
@@ -37,7 +36,7 @@ module.exports = async (client, m, plugins) => {
          }
       }
       if (m.isGroup && !groupSet.stay && (new Date * 1) >= groupSet.expired && groupSet.expired != 0) {
-         return client.reply(m.chat, Func.texted('italic', ' Bot time has expired and will leave from this group, thank you.', null, {
+         return client.reply(m.chat, Func.texted('italic', '🚩 Bot time has expired and will leave from this group, thank you.', null, {
             mentions: participants.map(v => v.id)
          })).then(async () => {
             groupSet.expired = 0
@@ -45,10 +44,9 @@ module.exports = async (client, m, plugins) => {
          })
       }
       if (users && (new Date * 1) >= users.expired && users.expired != 0) {
-         return client.reply(m.chat, Func.texted('italic', ' Your premium package has expired, thank you for buying and using our service.')).then(async () => {
+         return client.reply(m.chat, Func.texted('italic', '🚩 Your premium package has expired, thank you for buying and using our service.')).then(async () => {
             users.premium = false
             users.expired = 0
-            users.limit = global.limit
          })
       }
       if (users) users.lastseen = new Date() * 1
@@ -66,13 +64,6 @@ module.exports = async (client, m, plugins) => {
          setting.lastReset = new Date * 1
          global.db.users.filter(v => v.limit < global.limit && !v.premium).map(v => v.limit = global.limit)
          Object.entries(global.db.statistic).map(([_, prop]) => prop.today = 0)
-      }, {
-         scheduled: true,
-         timezone: global.timezone
-      })
-      cron.schedule('*/10 * * * *', async () => {
-         const tmpFiles = fs.readdirSync('./temp')
-         if (tmpFiles.length > 0) tmpFiles.map(v => fs.unlinkSync('./temp/' + v))
       }, {
          scheduled: true,
          timezone: global.timezone
@@ -98,9 +89,7 @@ module.exports = async (client, m, plugins) => {
       })
       let getPrefix = body ? body.charAt(0) : ''
       let myPrefix = (setting.multiprefix ? setting.prefix.includes(getPrefix) : setting.onlyprefix == getPrefix) ? getPrefix : undefined
-      // 1 = SHOW ALL ON CONSOLE
-      // 2 = SHOW ONLY COMMAND MSG
-      component.Logs(client, m, myPrefix, 1)
+      component.Logs(client, m, myPrefix)
       if (m.isBot || m.chat.endsWith('broadcast')) return
       // let levelAwal = Func.level(users.point)[0]
       // if (users && body && !/profile|menu|help|point|limit/i.test(body)) users.point += Func.randomInt(100, 1500)
@@ -121,8 +110,8 @@ module.exports = async (client, m, plugins) => {
          }
       }
       let isPrefix,
-         usage = Func.arrayJoin(Object.values(Object.fromEntries(Object.entries(plugins).filter(([name, prop]) => prop.run.usage))).map(v => v.run.usage)),
-         hidden = Func.arrayJoin(Object.values(Object.fromEntries(Object.entries(plugins).filter(([name, prop]) => prop.run.hidden))).map(v => v.run.hidden)),
+         usage = Func.arrayJoin(Object.values(Object.fromEntries(Object.entries(global.client.plugins).filter(([name, prop]) => prop.run.usage))).map(v => v.run.usage)),
+         hidden = Func.arrayJoin(Object.values(Object.fromEntries(Object.entries(global.client.plugins).filter(([name, prop]) => prop.run.hidden))).map(v => v.run.hidden)),
          commands = usage.concat(hidden)
       if ((body && body.length != 1 && (isPrefix = (myPrefix || '')[0])) || body && commands.includes((body.split` ` [0]).toLowerCase())) {
          let args = body.replace(isPrefix, '').split` `.filter(v => v)
@@ -131,7 +120,7 @@ module.exports = async (client, m, plugins) => {
          let clean = start.trim().split` `.slice(1)
          let text = clean.join` `
          let prefixes = global.db.setting.multiprefix ? global.db.setting.prefix : [global.db.setting.onlyprefix]
-         const is_commands = Object.fromEntries(Object.entries(plugins).filter(([name, prop]) => prop.run.usage))
+         const is_commands = Object.fromEntries(Object.entries(global.client.plugins).filter(([name, prop]) => prop.run.usage))
          let matcher = Func.matcher(command, commands).filter(v => v.accuracy >= 60)
          try {
             if (new Date() * 1 - chats.command > (global.cooldown * 1000)) {
@@ -149,9 +138,9 @@ module.exports = async (client, m, plugins) => {
             })
          }
          if (!commands.includes(command) && matcher.length > 0 && !setting.self) {
-            if (!m.isGroup || (m.isGroup && !groupSet.mute)) return client.reply(m.chat, ` Command you are using is wrong, try the following recommendations :\n\n${matcher.map(v => '➠ *' + (isPrefix ? isPrefix : '') + v.string + '* (' + v.accuracy + '%)').join('\n')}`, m)
+            if (!m.isGroup || (m.isGroup && !groupSet.mute)) return client.reply(m.chat, `🚩 Command you are using is wrong, try the following recommendations :\n\n${matcher.map(v => '➠ *' + (isPrefix ? isPrefix : '') + v.string + '* (' + v.accuracy + '%)').join('\n')}`, m)
          }
-         if (setting.error.includes(command) && !setting.self) return client.reply(m.chat, Func.texted('bold', ` Command _${(isPrefix ? isPrefix : '') + command}_ disabled.`), m)
+         if (setting.error.includes(command) && !setting.self) return client.reply(m.chat, Func.texted('bold', `🚩 Command _${(isPrefix ? isPrefix : '') + command}_ disabled.`), m)
          if (commands.includes(command)) {
             users.hit += 1
             users.usebot = new Date() * 1
@@ -165,9 +154,9 @@ module.exports = async (client, m, plugins) => {
             if (!turn && !turn_hidden) continue
             if (!m.isGroup && global.blocks.some(no => m.sender.startsWith(no))) return client.updateBlockStatus(m.sender, 'block')
             if (setting.self && !isOwner && !m.fromMe) return
-            if (setting.pluginDisable.includes(name)) return client.reply(m.chat, Func.texted('bold', ` Plugin disabled by Owner.`), m)
+            if (setting.pluginDisable.includes(name)) return client.reply(m.chat, Func.texted('bold', `🚩 Plugin disabled by Owner.`), m)
             if (!m.isGroup && !['owner'].includes(name) && chats && !isPrem && !users.banned && new Date() * 1 - chats.lastchat < global.timer) continue
-            if (!m.isGroup && !['owner', 'confess', 'create_bot'].includes(name) && chats && !isPrem && !users.banned && setting.groupmode) return client.sendMessageModify(m.chat, ` Using bot in private chat only for premium user, upgrade to premium plan only Ksh. 200,- to get 1K limits for 1 month.\n\nIf you want to buy contact *${prefixes[0]}owner*`, m, {
+            if (!m.isGroup && !['owner', 'confess', 'create_bot'].includes(name) && chats && !isPrem && !users.banned && setting.groupmode) return client.sendMessageModify(m.chat, `🚩 Using bot in private chat only for premium user, upgrade to premium plan only Rp. 10,000,- to get 1K limits for 1 month.\n\nIf you want to buy contact *${prefixes[0]}owner*`, m, {
                largeThumb: true,
                thumbnail: await Func.fetchBuffer('https://telegra.ph/file/e453435f8c29bd1609cca.jpg'),
                url: setting.link
@@ -184,7 +173,7 @@ module.exports = async (client, m, plugins) => {
                continue
             }
             if (cmd.restrict && !isOwner && text && new RegExp('\\b' + global.db.setting.toxic.join('\\b|\\b') + '\\b').test(text.toLowerCase())) {
-               client.reply(m.chat, ` You violated the *Terms & Conditions* of using bots by using blacklisted keywords, as a penalty for your violation being blocked and banned. To unblock and unbanned you have to pay *Ksh. 200,-*`, m).then(() => {
+               client.reply(m.chat, `🚩 You violated the *Terms & Conditions* of using bots by using blacklisted keywords, as a penalty for your violation being blocked and banned. To unblock and unbanned you have to pay *Rp. 10,000,-*`, m).then(() => {
                   users.banned = true
                   client.updateBlockStatus(m.sender, 'block')
                })
@@ -199,7 +188,7 @@ module.exports = async (client, m, plugins) => {
                continue
             }
             if (cmd.limit && users.limit < 1) {
-               return client.reply(m.chat, ` Your bot usage has reached the limit and will be will be reset after 12 hours.\n\nTo get more limits, upgrade to a premium plan send *${prefixes[0]}premium*`, m).then(() => users.premium = false)
+               return client.reply(m.chat, `🚩 Your bot usage has reached the limit and will be will be reset after 12 hours.\n\nTo get more limits, upgrade to a premium plan send *${prefixes[0]}premium*`, m).then(() => users.premium = false)
                continue
             }
             if (cmd.limit && users.limit > 0) {
@@ -207,7 +196,7 @@ module.exports = async (client, m, plugins) => {
                if (users.limit >= limit) {
                   users.limit -= limit
                } else {
-                  client.reply(m.chat, Func.texted('bold', ` Your limit is not enough to use this feature.`), m)
+                  client.reply(m.chat, Func.texted('bold', `🚩 Your limit is not enough to use this feature.`), m)
                   continue
                }
             }
@@ -236,14 +225,13 @@ module.exports = async (client, m, plugins) => {
                isPrem,
                isOwner,
                isAdmin,
-               isBotAdmin,
-               plugins
+               isBotAdmin
             })
             break
          }
       } else {
          let prefixes = setting.multiprefix ? setting.prefix : [setting.onlyprefix]
-         const is_events = Object.fromEntries(Object.entries(plugins).filter(([name, prop]) => !prop.run.usage))
+         const is_events = Object.fromEntries(Object.entries(global.client.plugins).filter(([name, prop]) => !prop.run.usage))
          for (let name in is_events) {
             let event = is_events[name].run
             if (event.cache && event.location) {
@@ -254,7 +242,7 @@ module.exports = async (client, m, plugins) => {
             if (m.isGroup && !['exec'].includes(name) && groupSet.mute) continue
             if (setting.pluginDisable.includes(name)) continue
             if (!m.isGroup && chats && !isPrem && !users.banned && new Date() * 1 - chats.lastchat < global.timer) continue
-            if (!m.isGroup && chats && !isPrem && !users.banned && !['chatAI'].includes(name) && setting.groupmode) return client.sendMessageModify(m.chat, ` Using bot in private chat only for premium user, upgrade to premium plan only Ksh. 200,- to get 1K limits for 1 month.\n\nIf you want to buy contact *${prefixes[0]}owner*`, m, {
+            if (!m.isGroup && chats && !isPrem && !users.banned && !['chatAI'].includes(name) && setting.groupmode) return client.sendMessageModify(m.chat, `🚩 Using bot in private chat only for premium user, upgrade to premium plan only Rp. 10,000,- to get 1K limits for 1 month.\n\nIf you want to buy contact *${prefixes[0]}owner*`, m, {
                largeThumb: true,
                thumbnail: await Func.fetchBuffer('https://telegra.ph/file/0b32e0a0bb3b81fef9838.jpg'),
                url: setting.link
@@ -286,8 +274,7 @@ module.exports = async (client, m, plugins) => {
                chats,
                groupSet,
                groupMetadata,
-               setting,
-               plugins
+               setting
             })
          }
       }
