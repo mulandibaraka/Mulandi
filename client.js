@@ -1,14 +1,20 @@
-const { useMultiFileAuthState, DisconnectReason, makeInMemoryStore, msgRetryCounterMap, delay } = require(require('fs').existsSync('./node_modules/bails') ? 'bails' : 'baileys')
-const pino = require('pino'), path = require('path'), fs = require('fs'), colors = require('@colors/colors/safe'), qrcode = require('qrcode-terminal'), axios = require('axios')
+require('./system/config'), require('events').EventEmitter.defaultMaxListeners = 50
+const pino = require('pino'),
+   path = require('path'),
+   colors = require('@colors/colors/safe'),
+   qrcode = require('qrcode-terminal'),
+   axios = require('axios'),
+   spinnies = new(require('spinnies'))(),
+   fs = require('fs'),
+   baileys = fs.existsSync('./node_modules/baileys') ? 'baileys' : fs.existsSync('./node_modules/@adiwajshing/baileys') ? '@adiwajshing/baileys' : 'bails'
+const { useMultiFileAuthState, DisconnectReason, makeInMemoryStore, msgRetryCounterMap, delay } = require(baileys)
 global.component = new (require('@neoxr/neoxr-js'))
-const { Extra, Function, MongoDB, Scraper } = component
+const { Extra, Function, MongoDB, PostgreSQL, Scraper } = component
 const { Socket, Serialize, Scandir } = Extra
-if (process.env.DATABASE_URL) {
-   MongoDB.db = global.database
-}
-global.props = process.env.DATABASE_URL ? MongoDB : new(require('./system/localdb'))(global.database)
-global.Func = Function
+if (process.env.DATABASE_URL) MongoDB.db = global.database
+global.props = (process.env.DATABASE_URL && /mongo/.test(process.env.DATABASE_URL)) ? MongoDB : (process.env.DATABASE_URL && /postgres/.test(process.env.DATABASE_URL)) ? PostgreSQL : new(require('./system/localdb'))(global.database)
 global.scrap = Scraper
+global.Func = Function
 global.store = makeInMemoryStore({
    logger: pino().child({
       level: 'silent',
@@ -17,7 +23,6 @@ global.store = makeInMemoryStore({
 })
 
 const connect = async () => {
-   require('./system/config')
    const { state, saveCreds } = await useMultiFileAuthState('session')
    global.db = {users:[], chats:[], groups:[], statistic:{}, sticker:{}, setting:{}, ...(await props.fetch() ||{})}
    await props.save(global.db)
@@ -47,7 +52,7 @@ const connect = async () => {
          }
          return message
       },
-      browser: ['mohamed / spike-ai', 'safari', '1.0.0'],
+      browser: ['mohaliciois / spike-ai', 'safari', '1.0.0'],
       auth: state,
       getMessage: async (key) => {
          if (store) {
@@ -59,7 +64,7 @@ const connect = async () => {
          }
       },
       // To see the latest version : https://web.whatsapp.com/check-update?version=1&platform=web
-      version: [2, 2301, 6]
+      version: [2, 2308, 7]
    })
 
    store.bind(client.ev)
@@ -74,12 +79,20 @@ const connect = async () => {
             small: true
          })
       }
-      if (connection === 'open') {
-         console.log(colors.green(`Connected, you login as ${client.user.name || client.user.verifiedName}`))
+      if (connection === 'connecting') {
+       spinnies.add('start', {
+         text: 'Connecting . . .'
+      })
+     } else if (connection === 'open') {
+         spinnies.succeed('start', {
+            text: `Connected, you login as ${client.user.name || client.user.verifiedName}`
+         })
       } else if (connection === 'close') {
          if (lastDisconnect.error.output.statusCode == DisconnectReason.loggedOut) {
-            console.log(colors.red(`Can't connect to Web Socket`))
-            await props.save()
+            spinnies.fail('start', {
+               text: `Can't connect to Web Socket`
+            })
+            await machine.save()
             process.exit(0)
          } else {
             connect().catch(() => connect())
@@ -88,16 +101,14 @@ const connect = async () => {
    })
 
    client.ev.on('creds.update', saveCreds)
-
    client.ev.on('messages.upsert', async chatUpdate => {
       try {
          m = chatUpdate.messages[0]
          if (!m.message) return
          Serialize(client, m)
-         Scandir('./plugins').then(files => {
-            global.client.plugins = Object.fromEntries(files.filter(v => v.endsWith('.js')).map(file => [path.basename(file).replace('.js', ''), require(file)]))
-         }).catch(e => console.error(e))
-         require('./system/baileys'), require('./handler')(client, m)
+         const files = await Scandir('./plugins')
+         const plugins = Object.fromEntries(files.filter(v => v.endsWith('.js')).map(file => [path.basename(file).replace('.js', ''), require(file)]))
+         require('./system/baileys'), require('./handler')(client, m, plugins)
       } catch (e) {
          console.log(e)
       }
@@ -116,8 +127,8 @@ const connect = async () => {
    client.ev.on('group-participants.update', async (room) => {
       let meta = await (await client.groupMetadata(room.id))
       let member = room.participants[0]
-      let text_welcome = `+tag 👋 thanks for joining +grup group. Welcome! `
-      let text_left = `+tag good bye, 🖕 we are probably not gonna miss you! `
+      let text_welcome = `Hello 👋🏻 +tag Thanks for joining  +grup .`
+      let text_left = `This Pussy 🗿 +tag left from this group for no apparent reason 💁🏻‍♂️.`
       let groupSet = global.db.groups.find(v => v.jid == room.id)
       try {
          pic = await Func.fetchBuffer(await client.profilePictureUrl(member, 'image'))
@@ -127,7 +138,7 @@ const connect = async () => {
       if (room.action == 'add') {
          if (groupSet.localonly) {
             if (global.db.users.some(v => v.jid == member) && !global.db.users.find(v => v.jid == member).whitelist && !member.startsWith('254') || !member.startsWith('254')) {
-               client.reply(room.id, Func.texted('bold', `Sorry @${member.split`@`[0]}, this group is only for Kenyans and you will be removed automatically!.`))
+               client.reply(room.id, Func.texted('bold', `Bitch @${member.split`@`[0]}, this group is only for Kenyan people and you will removed automatically.`))
                client.updateBlockStatus(member, 'block')
                return await Func.delay(2000).then(() => client.groupParticipantsUpdate(room.id, [member], 'remove'))
             }
@@ -155,6 +166,20 @@ const connect = async () => {
          await client.updateBlockStatus(object, 'block')
       }
    })
+   
+   // Auto restart if ram usage has reached the limit, if you want to use enter the ram size in bytes
+   const ramCheck = setInterval(() => {
+      var ramUsage = process.memoryUsage().rss
+      if (ramUsage >= 7000000000) { // 7 GB
+         clearInterval(ramCheck)
+         process.send('reset')
+      }
+   }, 60 * 1000) // Checking every 1 minutes
+   
+   setInterval(async () => {
+      const tmpFiles = fs.readdirSync('./temp')
+      if (tmpFiles.length > 0) tmpFiles.map(v => fs.unlinkSync('./temp/' + v))
+   }, 60 * 1000 * 5)
 
    setInterval(async () => {
       if (global.db) await props.save(global.db)
