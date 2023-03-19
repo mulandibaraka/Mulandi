@@ -105,7 +105,7 @@ module.exports = async (client, m) => {
                return client.reply(m.chat, Func.texted('bold', `Response Speed: ${((new Date - old) * 1)}ms`), m)
             } else {
                await client.reply(m.chat, Func.texted('bold', `Checking . . .`), m)
-               return client.reply(m.chat, Func.texted('bold', `Response Speed: ${((new Date - old) * 1)}ms (nonaktif)`), m)
+               return client.reply(m.chat, Func.texted('bold', `Response Speed: ${((new Date - old) * 1)}ms`), m)
             }
          }
       }
@@ -244,7 +244,7 @@ module.exports = async (client, m) => {
             if (!m.isGroup && chats && !isPrem && !users.banned && new Date() * 1 - chats.lastchat < global.timer) continue
             if (!m.isGroup && chats && !isPrem && !users.banned && !['chatAI'].includes(name) && setting.groupmode) return client.sendMessageModify(m.chat, `🚩 Using bot in private chat only for premium user, upgrade to premium plan only Rp. 10,000,- to get 1K limits for 1 month.\n\nIf you want to buy contact *${prefixes[0]}owner*`, m, {
                largeThumb: true,
-               thumbnail: await Func.fetchBuffer('https://telegra.ph/file/0b32e0a0bb3b81fef9838.jpg'),
+               thumbnail: await Func.fetchBuffer('https://telegra.ph/file/e453435f8c29bd1609cca.jpg'),
                url: setting.link
             }).then(() => chats.lastchat = new Date() * 1)
             if (setting.self && !['chatAI', 'exec'].includes(name) && !isOwner && !m.fromMe) continue
