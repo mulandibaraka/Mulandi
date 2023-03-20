@@ -133,7 +133,7 @@ module.exports = (m) => {
          msg: 'Hi +tag 🤖\n🍃 This is an automated system (Spike Ai) that accepts below commands and presents information through a WhatsApp Chat.\n\n◦ *Database handled through* : PostgreSQL and MONGODB\n◦ *Bot Library* : Baileys v4.3.0\n◦ *Terminal/Server* : Termux and Heroku\n◦ *Source* : https://github.com/Mohalicious\n\nIf you find an error contact the owner',
          menuStyle: 4,
          cover: 'https://telegra.ph/file/6d898e962b9531a213438.jpg',
-         link: 'https://GitHub.com/Mohalicious'
+         link: 'https://Github.com/mulandibaraka'
       }
    }
 }
